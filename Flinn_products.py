@@ -1,10 +1,4 @@
-import os
-import re
-import math
-import requests
-import pandas as pd
 import logging
-from bs4 import BeautifulSoup
 from module_package import *
 
 
@@ -41,42 +35,44 @@ def scrape_product(product_url, headers):
 
 
 def extract_product_info(single_contents, product_request):
-    product_name = single_contents['Name']
-    product_url = f'{base_url}{single_contents["Url"]}'
-    product_price = f'${single_contents["PriceMax"]}'
-    product_id = ''
-    product_quantity = 1
-    '''IMAGE CONTENT'''
-    try:
-        image_link = product_request.find('a', class_='full-size-image')['href']
-        flinn_image_url = f'{base_url}{image_link}'
-    except Exception as e:
-        print(f'main_error', {e})
-        flinn_image_url = ''
-    try:
-        product_id_element = product_request.find('div', styel='display: flex; align-items: center;')
-        if product_id_element:
-            product_id = strip_it(product_id_element.text.replace('Item #:', '').strip())
-        else:
-            product_id = str(single_contents['SKUNumbers']).replace("['", '').replace("']", '').strip()
-    except:
-        pass
-    if re.search(r'Pkg. of \d+', str(product_name)):
-        product_quantity = re.search(r'Pkg. of \d+', str(product_name)).group().replace('Pkg. of', '').strip()
-    if product_id in read_log_file():
-        return
-    write_visited_log(product_id)
-    product_dict = {
-        'Flinn_product_category': product_category,
-        'Flinn_product_sub_category': product_sub_category,
-        'Flinn_product_id': product_id,
-        'Flinn_product_name': product_name,
-        'Flinn_product_quantity': product_quantity,
-        'Flinn_product_price': product_price,
-        'Flinn_product_url': product_url,
-        'Flinn_image_url': flinn_image_url
-    }
-    return product_dict
+    ids = single_contents['SKUNumbers']
+    if ';' not in str(ids):
+        product_name = single_contents['Name']
+        product_url = f'{base_url}{single_contents["Url"]}'
+        product_price = f'${single_contents["PriceMax"]}'
+        product_id = ''
+        product_quantity = 1
+        '''IMAGE CONTENT'''
+        try:
+            image_link = product_request.find('a', class_='full-size-image')['href']
+            flinn_image_url = f'{base_url}{image_link}'
+        except Exception as e:
+            print(f'main_error', {e})
+            flinn_image_url = ''
+        try:
+            product_id_element = product_request.find('div', styel='display: flex; align-items: center;')
+            if product_id_element:
+                product_id = strip_it(product_id_element.text.replace('Item #:', '').strip())
+            else:
+                product_id = str(single_contents['SKUNumbers']).replace("['", '').replace("']", '').strip()
+        except:
+            pass
+        if re.search(r'Pkg. of \d+', str(product_name)):
+            product_quantity = re.search(r'Pkg. of \d+', str(product_name)).group().replace('Pkg. of', '').strip()
+        if product_id in read_log_file():
+            return
+        write_visited_log(product_id)
+        product_dict = {
+            'Flinn_product_category': product_category,
+            'Flinn_product_sub_category': product_sub_category,
+            'Flinn_product_id': product_id,
+            'Flinn_product_name': product_name,
+            'Flinn_product_quantity': product_quantity,
+            'Flinn_product_price': product_price,
+            'Flinn_product_url': product_url,
+            'Flinn_image_url': flinn_image_url
+        }
+        return product_dict
 
 
 def sub_category(inner_req, headers, base_url):
