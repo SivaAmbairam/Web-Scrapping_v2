@@ -232,14 +232,19 @@ def post_json_response(url, headers=None, payload=None):
 
 @retry
 def get_zenrowa(url, params=None):
-    client = ZenRowsClient('52e9cd0e048a062fba225a28c885b96cc873feb7')
-    r = client.get(url, params = params)
+    try:
+        client = ZenRowsClient('52e9cd0e048a062fba225a28c885b96cc873feb7')
+        r = client.get(url, params=params)
+    except requests.exceptions.Timeout:
+        print(f'Timeout error for URL: {url}')
+        status_log(url=url)
+        return None
     if r.status_code == 200:
         soup = BeautifulSoup(r.text, 'html.parser')
         return soup
     elif 499 >= r.status_code >= 400:
         print(f'client error response, status code {r.status_code} \nrefer: {r.url}')
-        status_log(r)
+        status_log(response=r, url=r.url)
     elif 599 >= r.status_code >= 500:
         print(f'server error response, status code {r.status_code} \nrefer: {r.url}')
         count = 1
@@ -255,9 +260,9 @@ def get_zenrowa(url, params=None):
                 print('retry ', count)
                 count += 1
                 time.sleep(count * 2)
-        status_log(r)
+        status_log(response=r, url=r.url)
     else:
-        status_log(r)
+        status_log(response=r, url=r.url)
         return None
 
 
