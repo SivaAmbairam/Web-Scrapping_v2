@@ -169,6 +169,8 @@ if __name__ == '__main__':
                 if main_url in read_log_file():
                     continue
                 sub_request = get_soup_verify(main_url, headers)
+                if sub_request is None:
+                    continue
                 for other_content in sub_request.find_all('div', class_='ssi-card-container'):
                     inner_href = other_content.a['href']
                     if 'http' not in str(inner_href):
