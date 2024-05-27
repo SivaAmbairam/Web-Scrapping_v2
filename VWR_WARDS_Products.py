@@ -15,35 +15,6 @@ def read_log_file():
             return read_file.read().split('\n')
     return []
 
-@retry
-def get_zenrowa(url, params=None):
-    client = ZenRowsClient('ec53d24bb14cc1629d1fd71f2ca27c919a059497')
-    r = client.get(url, params = params)
-    if r.status_code == 200:
-        soup = BeautifulSoup(r.text, 'html.parser')
-        return soup
-    elif 499 >= r.status_code >= 400:
-        print(f'client error response, status code {r.status_code} \nrefer: {r.url}')
-        status_log(r)
-    elif 599 >= r.status_code >= 500:
-        print(f'server error response, status code {r.status_code} \nrefer: {r.url}')
-        count = 1
-        while count != 10:
-            print('while', count)
-            client = ZenRowsClient('ec53d24bb14cc1629d1fd71f2ca27c919a059497')
-            r = client.get(url, params=params)
-            print('status_code: ', r.status_code)
-            if r.status_code == 200:
-                soup = BeautifulSoup(r.text, 'html.parser')
-                return soup
-            else:
-                print('retry ', count)
-                count += 1
-                time.sleep(count * 2)
-        else:
-            status_log(r)
-            return None
-
 
 if __name__ == '__main__':
     timestamp = datetime.now().date().strftime('%Y%m%d')
@@ -83,6 +54,8 @@ if __name__ == '__main__':
                     #     print(f'page_link---------->{page_link}')
                     #     response = get_zenrowa(page_link, params = {'js_render': 'true', "premium_proxy": "true", "proxy_country": "us"})
                     #     page_soup = BeautifulSoup(response.text, 'html.parser')
+                    #     if page_soup is None:
+                    #         continue
                     #     '''PRODUCT URL'''
                     #     url_href = page_soup.find_all('div', class_='search-item row')
                     #     for single_href in url_href:
@@ -145,6 +118,8 @@ if __name__ == '__main__':
                     #                         id_tag = product_item.find('span')['id'].replace("['", '').replace("']", '').split('_', 1)[-1].split('_', 1)[0].strip()
                     #                         product_req_url = f'https://us.vwr.com/store/services/pricing/json/skuPricing.jsp?skuIds={id_tag}&salesOrg=8000&salesOffice=0000&profileLocale=en_US&promoCatalogNumber=&promoCatalogNumberForSkuId=&forcePromo=false'
                     #                         price_request = get_json_response(product_req_url, headers)
+                    #                         if price_request is None:
+                    #                             continue
                     #                         for single_price in price_request:
                     #                             product_price = single_price['salePrice']
                     #                             print('current datetime------>', datetime.now())
@@ -169,6 +144,8 @@ if __name__ == '__main__':
                     #     write_visited_log(page_link)
                     if page_req.status_code == 200:
                         page_soup = get_soup(page_link, headers)
+                        if page_soup is None:
+                            continue
                         '''PRODUCT URL'''
                         url_href = page_soup.find_all('div', class_='search-item row')
                         for single_href in url_href:
