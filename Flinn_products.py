@@ -74,6 +74,59 @@ def extract_product_info(single_contents, product_request):
         return product_dict
 
 
+def extract_sub_product_info(product_request, product_url):
+
+    '''IMAGE CONTENT'''
+    try:
+        image_link = product_request.find('a', class_='full-size-image')['href']
+        flinn_image_url = f'{base_url}{image_link}'
+    except:
+        flinn_image_url = ''
+    '''PRODUCT NAME AND PRODUCT ID'''
+    try:
+        inner_data = product_request.find('div', class_='product-page__info--item list col-xs-8')
+        product_id = inner_data.find('span', class_='code').extract().text.replace('(', '').replace(')', '').strip()
+        product_names = strip_it(inner_data.text.strip())
+        product_name = product_names
+        if re.search('Pkg. of \d+', str(product_name)):
+            product_quantity = re.search('Pkg. of \d+', str(product_name)).group().replace('Pkg. of', '').strip()
+        else:
+            product_quantity = 1
+    except:
+        product_name = ''
+        product_id = ''
+        product_quantity = ''
+    '''PRODUCT PRICE'''
+    try:
+        if product_request.find('span', class_='product-page__price'):
+            product_price = strip_it(product_request.find('span', class_='product-page__price').text.strip())
+        elif product_request.find('div', class_='product-page__price'):
+            product_data = product_request.find('div', class_='product-page__price')
+            if product_data.find('span', class_='product-page__original-price'):
+                extract_tag = product_data.find('span', class_='product-page__original-price').extract()
+                product_price = strip_it(product_data.text.strip())
+            else:
+                product_price = strip_it(product_data.text.strip())
+        else:
+            product_price = ''
+    except:
+        product_price = ''
+    if product_id in read_log_file():
+        return
+    write_visited_log(product_id)
+    product_dict = {
+        'Flinn_product_category': product_category,
+        'Flinn_product_sub_category': product_sub_category,
+        'Flinn_product_id': product_id,
+        'Flinn_product_name': product_name,
+        'Flinn_product_quantity': product_quantity,
+        'Flinn_product_price': product_price,
+        'Flinn_product_url': product_url,
+        'Flinn_image_url': flinn_image_url
+    }
+    return product_dict
+
+
 def sub_category(inner_req, headers, base_url):
     content_id_element = inner_req.find('div', id='FilteredListList')
     if not content_id_element:
@@ -92,8 +145,18 @@ def sub_category(inner_req, headers, base_url):
             if not product_request:
                 logging.error(f"Failed to scrape product page: {product_url}")
                 continue
-            product_dict = extract_product_info(single_contents, product_request)
-            save_product_data(product_dict)
+            if not product_request.find('ul', class_='product-page__info--options list'):
+                product_dict = extract_product_info(single_contents, product_request)
+                save_product_data(product_dict)
+            else:
+                sub_product = product_request.find('ul', class_='product-page__info--options list').find_all('li')
+                for single_product in sub_product:
+                    product_url = f'{base_url}{single_product.find('a', class_='option-link col-xs-12 col-sm-6')['href']}'
+                    product_request = get_soup_verify(product_url, headers)
+                    if product_request is None:
+                        continue
+                    product_dict = extract_sub_product_info(product_request, product_url)
+                    save_product_data(product_dict)
 
 
 def scrape_category(category_url, headers, base_url):
@@ -114,13 +177,22 @@ def scrape_category(category_url, headers, base_url):
         content_json = json_soup.get('Items', [])
         for single_contents in content_json:
             product_url = f'{base_url}{single_contents["Url"]}'
-            # print(product_url)
             product_request = scrape_product(product_url, headers)
             if not product_request:
                 logging.error(f"Failed to scrape product page: {product_url}")
                 continue
-            product_dict = extract_product_info(single_contents, product_request)
-            save_product_data(product_dict)
+            if not product_request.find('ul', class_='product-page__info--options list'):
+                product_dict = extract_product_info(single_contents, product_request)
+                save_product_data(product_dict)
+            else:
+                sub_product = product_request.find('ul', class_='product-page__info--options list').find_all('li')
+                for single_product in sub_product:
+                    product_url = f'{base_url}{single_product.find('a', class_='option-link col-xs-12 col-sm-6')['href']}'
+                    product_request = get_soup_verify(product_url, headers)
+                    if product_request is None:
+                        continue
+                    product_dict = extract_sub_product_info(product_request, product_url)
+                    save_product_data(product_dict)
 
 
 def save_product_data(product_dict):
