@@ -152,7 +152,7 @@ def sub_category(inner_req, headers, base_url):
                 sub_product = product_request.find('ul', class_='product-page__info--options list').find_all('li')
                 for single_product in sub_product:
                     product_url = f'{base_url}{single_product.find('a', class_='option-link col-xs-12 col-sm-6')['href']}'
-                    product_request = get_soup_verify(product_url, headers)
+                    product_request = get_soup(product_url, headers)
                     if product_request is None:
                         continue
                     product_dict = extract_sub_product_info(product_request, product_url)
@@ -188,7 +188,7 @@ def scrape_category(category_url, headers, base_url):
                 sub_product = product_request.find('ul', class_='product-page__info--options list').find_all('li')
                 for single_product in sub_product:
                     product_url = f'{base_url}{single_product.find('a', class_='option-link col-xs-12 col-sm-6')['href']}'
-                    product_request = get_soup_verify(product_url, headers)
+                    product_request = get_soup(product_url, headers)
                     if product_request is None:
                         continue
                     product_dict = extract_sub_product_info(product_request, product_url)
