@@ -61,7 +61,7 @@ def log_retry_failure(url, error_type):
 def get_soup_verify(url, headers=None):
     try:
         ses = requests.session()
-        r = ses.get(url, headers=headers, timeout=1000, verify=False)
+        r = ses.get(url, headers=headers, timeout=500, verify=False)
     except requests.exceptions.Timeout:
         print(f'Timeout error for URL: {url}')
         status_log(url=url)
@@ -77,7 +77,7 @@ def get_soup_verify(url, headers=None):
         count = 1
         while count != 10:
             print('while', count)
-            r = requests.Session().get(url, headers=headers, timeout=1000, verify=False)
+            r = requests.Session().get(url, headers=headers, timeout=500, verify=False)
             print('status_code: ', r.status_code)
             if r.status_code == 200:
                 soup = BeautifulSoup(r.text, 'html.parser')
@@ -96,7 +96,7 @@ def get_soup_verify(url, headers=None):
 def get_soup(url, headers=None):
     try:
         ses = requests.session()
-        r = ses.get(url, headers=headers, timeout=1000)
+        r = ses.get(url, headers=headers, timeout=500)
     except requests.exceptions.Timeout:
         print(f'Timeout error for URL: {url}')
         status_log(url=url)
@@ -112,7 +112,7 @@ def get_soup(url, headers=None):
         count = 1
         while count != 10:
             print('while', count)
-            r = requests.Session().get(url, headers=headers, timeout=1000)
+            r = requests.Session().get(url, headers=headers, timeout=500)
             print('status_code: ', r.status_code)
             if r.status_code == 200:
                 soup = BeautifulSoup(r.text, 'html.parser')
@@ -131,7 +131,7 @@ def get_soup(url, headers=None):
 def post_soup(url, headers=None, payload=None):
     try:
         ses = requests.session()
-        r = ses.post(url, headers=headers, json=payload, timeout=1000, verify=False)
+        r = ses.post(url, headers=headers, json=payload, timeout=500, verify=False)
     except requests.exceptions.Timeout:
         print(f'Timeout error for URL: {url}')
         status_log(url=url)
@@ -147,7 +147,7 @@ def post_soup(url, headers=None, payload=None):
         count = 1
         while count != 10:
             print('while', count)
-            r = requests.Session().post(url, headers=headers, json=payload, verify=False, timeout=1000)
+            r = requests.Session().post(url, headers=headers, json=payload, verify=False, timeout=500)
             print('status_code: ', r.status_code)
             if r.status_code == 200:
                 soup = BeautifulSoup(r.text, 'html.parser')
@@ -166,7 +166,7 @@ def post_soup(url, headers=None, payload=None):
 def get_json_response(url, headers=None):
     try:
         ses = requests.session()
-        r = ses.get(url, headers=headers, timeout=1000)
+        r = ses.get(url, headers=headers, timeout=500)
     except requests.exceptions.Timeout:
         print(f'Timeout error for URL: {url}')
         status_log(url=url)
@@ -182,7 +182,7 @@ def get_json_response(url, headers=None):
         count = 1
         while count != 10:
             print('while', count)
-            r = requests.get(url, headers=headers, timeout=1000)
+            r = requests.get(url, headers=headers, timeout=500)
             print('status_code: ', r.status_code)
             if r.status_code == 200:
                 data_ = r.json()
@@ -201,7 +201,7 @@ def get_json_response(url, headers=None):
 def post_json_response(url, headers=None, payload=None):
     try:
         ses = requests.session()
-        r = ses.post(url, headers=headers, json=payload, timeout=1000)
+        r = ses.post(url, headers=headers, json=payload, timeout=500)
     except requests.exceptions.Timeout:
         print(f'Timeout error for URL: {url}')
         status_log(url=url)
@@ -216,7 +216,7 @@ def post_json_response(url, headers=None, payload=None):
         count = 1
         while count != 10:
             print('while', count)
-            r = ses.post(url, headers=headers, json=payload, timeout=1000)
+            r = ses.post(url, headers=headers, json=payload, timeout=500)
             print('status_code: ', r.status_code)
             if r.status_code == 200:
                 return r.json()
