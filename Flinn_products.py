@@ -46,8 +46,7 @@ def extract_product_info(single_contents, product_request):
         try:
             image_link = product_request.find('a', class_='full-size-image')['href']
             flinn_image_url = f'{base_url}{image_link}'
-        except Exception as e:
-            print(f'main_error', {e})
+        except:
             flinn_image_url = ''
         try:
             product_id_element = product_request.find('div', styel='display: flex; align-items: center;')
