@@ -10,6 +10,9 @@ from datetime import datetime
 from zenrows import ZenRowsClient
 
 
+zenrows_api_key = ''
+
+
 def clean_header(head):
     header_dict = {}
     split_new_line = head.split('\n')
@@ -72,6 +75,7 @@ def get_soup_verify(url, headers=None):
     elif 499 >= r.status_code >= 400:
         print(f'client error response, status code {r.status_code} \nrefer: {r.url}')
         status_log(response=r, url=r.url)
+        return None
     elif 599 >= r.status_code >= 500:
         print(f'server error response, status code {r.status_code} \nrefer: {r.url}')
         count = 1
@@ -86,7 +90,9 @@ def get_soup_verify(url, headers=None):
                 print('retry ', count)
                 count += 1
                 time.sleep(count * 2)
-        status_log(response=r, url=r.url)
+                status_log(response=r, url=r.url)
+                return None
+        
     else:
         status_log(response=r, url=r.url)
         return None
@@ -107,6 +113,7 @@ def get_soup(url, headers=None):
     elif 499 >= r.status_code >= 400:
         print(f'client error response, status code {r.status_code} \nrefer: {r.url}')
         status_log(response=r, url=r.url)
+        return None
     elif 599 >= r.status_code >= 500:
         print(f'server error response, status code {r.status_code} \nrefer: {r.url}')
         count = 1
@@ -121,7 +128,8 @@ def get_soup(url, headers=None):
                 print('retry ', count)
                 count += 1
                 time.sleep(count * 2)
-        status_log(response=r, url=r.url)
+                status_log(response=r, url=r.url)
+                return None
     else:
         status_log(response=r, url=r.url)
         return None
@@ -131,7 +139,7 @@ def get_soup(url, headers=None):
 def post_soup(url, headers=None, payload=None):
     try:
         ses = requests.session()
-        r = ses.post(url, headers=headers, json=payload, timeout=500, verify=False)
+        r = ses.post(url, headers=headers, json=payload, timeout=500)
     except requests.exceptions.Timeout:
         print(f'Timeout error for URL: {url}')
         status_log(url=url)
@@ -142,12 +150,13 @@ def post_soup(url, headers=None, payload=None):
     elif 499 >= r.status_code >= 400:
         print(f'client error response, status code {r.status_code} \nrefer: {r.url}')
         status_log(response=r, url=r.url)
+        return None
     elif 599 >= r.status_code >= 500:
         print(f'server error response, status code {r.status_code} \nrefer: {r.url}')
         count = 1
         while count != 10:
             print('while', count)
-            r = requests.Session().post(url, headers=headers, json=payload, verify=False, timeout=500)
+            r = requests.Session().post(url, headers=headers, json=payload, timeout=500)
             print('status_code: ', r.status_code)
             if r.status_code == 200:
                 soup = BeautifulSoup(r.text, 'html.parser')
@@ -156,7 +165,8 @@ def post_soup(url, headers=None, payload=None):
                 print('retry ', count)
                 count += 1
                 time.sleep(count * 2)
-        status_log(response=r, url=r.url)
+                status_log(response=r, url=r.url)
+                return None
     else:
         status_log(response=r, url=r.url)
         return None
@@ -177,6 +187,7 @@ def get_json_response(url, headers=None):
     elif 499 >= r.status_code >= 400:
         print(f'client error response, status code {r.status_code} \nrefer: {r.url}')
         status_log(response=r, url=r.url)
+        return None
     elif 599 >= r.status_code >= 500:
         print(f'server error response, status code {r.status_code} \nrefer: {r.url}')
         count = 1
@@ -191,7 +202,8 @@ def get_json_response(url, headers=None):
                 print('retry ', count)
                 count += 1
                 time.sleep(count * 2)
-        status_log(response=r, url=r.url)
+                status_log(response=r, url=r.url)
+                return None
     else:
         status_log(response=r, url=r.url)
         return None
@@ -211,6 +223,7 @@ def post_json_response(url, headers=None, payload=None):
     elif 499 >= r.status_code >= 400:
         print(f'client error response, status code {r.status_code} \nrefer: {r.url}')
         status_log(response=r, url=r.url)
+        return None
     elif 599 >= r.status_code >= 500:
         print(f'server error response, status code {r.status_code} \nrefer: {r.url}')
         count = 1
@@ -224,7 +237,8 @@ def post_json_response(url, headers=None, payload=None):
                 print('retry ', count)
                 count += 1
                 time.sleep(count * 2)
-        status_log(response=r, url=r.url)
+                status_log(response=r, url=r.url)
+                return None
     else:
         status_log(response=r, url=r.url)
         return None
@@ -233,7 +247,7 @@ def post_json_response(url, headers=None, payload=None):
 @retry
 def get_zenrowa(url, params=None):
     try:
-        client = ZenRowsClient('52e9cd0e048a062fba225a28c885b96cc873feb7')
+        client = ZenRowsClient(zenrows_api_key)
         r = client.get(url, params=params)
     except requests.exceptions.Timeout:
         print(f'Timeout error for URL: {url}')
@@ -245,6 +259,7 @@ def get_zenrowa(url, params=None):
     elif 499 >= r.status_code >= 400:
         print(f'client error response, status code {r.status_code} \nrefer: {r.url}')
         status_log(response=r, url=r.url)
+        return None
     elif 599 >= r.status_code >= 500:
         print(f'server error response, status code {r.status_code} \nrefer: {r.url}')
         count = 1
@@ -260,10 +275,12 @@ def get_zenrowa(url, params=None):
                 print('retry ', count)
                 count += 1
                 time.sleep(count * 2)
-        status_log(response=r, url=r.url)
+                status_log(response=r, url=r.url)
+                return None
     else:
         status_log(response=r, url=r.url)
         return None
+
 
 
 
