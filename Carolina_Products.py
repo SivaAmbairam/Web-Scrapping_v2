@@ -56,7 +56,7 @@ if __name__ == '__main__':
                                     continue
                                 inner_data = page_soup.find_all('div', class_='c-feature-product qv-model')
                                 for single_data in inner_data:
-                                    product_url = f'{base_url}{single_data.find('a')["href"]}'
+                                    product_url = f'{base_url}{single_data.find("a")["href"]}'
                                     print(product_url)
                                     product_request = get_zenrowa(product_url, params = {'js_render': 'true', "premium_proxy": "true", "proxy_country": "us"})
                                     if product_request is None:
@@ -112,7 +112,7 @@ if __name__ == '__main__':
                         else:
                             inner_data = other_request.find_all('div', class_='c-feature-product qv-model')
                             for single_data in inner_data:
-                                product_url = f'{base_url}{single_data.find('a')["href"]}'
+                                product_url = f'{base_url}{single_data.find("a")["href"]}'
                                 print(product_url)
                                 product_request = get_zenrowa(product_url, params = {'js_render': 'true', "premium_proxy": "true", "proxy_country": "us"})
                                 if product_request is None:
@@ -179,7 +179,7 @@ if __name__ == '__main__':
                                 continue
                             inner_data = page_soup.find_all('div', class_='c-feature-product qv-model')
                             for single_data in inner_data:
-                                product_url = f'{base_url}{single_data.find('a')["href"]}'
+                                product_url = f'{base_url}{single_data.find("a")["href"]}'
                                 print(product_url)
                                 product_request = get_zenrowa(product_url, params = {'js_render': 'true', "premium_proxy": "true", "proxy_country": "us"})
                                 if product_request is None:
@@ -235,7 +235,7 @@ if __name__ == '__main__':
                     else:
                         inner_data = inner_request.find_all('div', class_='c-feature-product qv-model')
                         for single_data in inner_data:
-                            product_url = f'{base_url}{single_data.find('a')["href"]}'
+                            product_url = f'{base_url}{single_data.find("a")["href"]}'
                             print(product_url)
                             product_request = get_zenrowa(product_url, params = {'js_render': 'true', "premium_proxy": "true", "proxy_country": "us"})
                             if product_request is None:

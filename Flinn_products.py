@@ -151,7 +151,7 @@ def sub_category(inner_req, headers, base_url):
             else:
                 sub_product = product_request.find('ul', class_='product-page__info--options list').find_all('li')
                 for single_product in sub_product:
-                    product_url = f'{base_url}{single_product.find('a', class_='option-link col-xs-12 col-sm-6')['href']}'
+                    product_url = f"{base_url}{single_product.find('a', class_='option-link col-xs-12 col-sm-6')['href']}"
                     product_request = get_soup(product_url, headers)
                     if product_request is None:
                         continue
@@ -172,7 +172,7 @@ def scrape_category(category_url, headers, base_url):
     page_nav_number = category_req.find('h3', class_='hidden-lg hidden-xs b-filtered-list__nav-heading__current-category').text.split('(', 1)[-1].replace(')', '').strip()
     page_data = math.ceil(int(page_nav_number) / 6)
     for i in range(page_data):
-        json_url = f'{base_url}/api/Search/{content_id}/{i}?type=All&srt=d'
+        json_url = f"{base_url}/api/Search/{content_id}/{i}?type=All&srt=d"
         json_soup = get_json_response(json_url, headers)
         content_json = json_soup.get('Items', [])
         for single_contents in content_json:
@@ -187,7 +187,7 @@ def scrape_category(category_url, headers, base_url):
             else:
                 sub_product = product_request.find('ul', class_='product-page__info--options list').find_all('li')
                 for single_product in sub_product:
-                    product_url = f'{base_url}{single_product.find('a', class_='option-link col-xs-12 col-sm-6')['href']}'
+                    product_url = f"{base_url}{single_product.find('a', class_='option-link col-xs-12 col-sm-6')['href']}"
                     product_request = get_soup(product_url, headers)
                     if product_request is None:
                         continue

@@ -1,6 +1,7 @@
 from module_package import *
 import math
 
+
 '''PRODUCT NAME'''
 
 
@@ -163,9 +164,9 @@ if __name__ == '__main__':
         sub_product = main_product.find_all('li', class_='')
         for products in sub_product:
             product_sub_category = products.a.text.strip()
-            main_url = f'{base_url}{products.a['href']}'
+            main_url = f"{base_url}{products.a['href']}"
             if 'shop-by-learning-environment/' in str(products):
-                main_url = f'{base_url}{products.a['href']}'
+                main_url = f"{base_url}{products.a['href']}"
                 if main_url in read_log_file():
                     continue
                 sub_request = get_soup_verify(main_url, headers)
@@ -174,7 +175,7 @@ if __name__ == '__main__':
                 for other_content in sub_request.find_all('div', class_='ssi-card-container'):
                     inner_href = other_content.a['href']
                     if 'http' not in str(inner_href):
-                        inner_url = f'{base_url}{inner_href}'
+                        inner_url = f"{base_url}{inner_href}"
                     else:
                         inner_url = inner_href
                     inner_request = get_soup_verify(inner_url, headers)
@@ -218,13 +219,13 @@ if __name__ == '__main__':
                                 'disableProductCompare': 'false',
                                 'langId': '-1',
                                 'facet': '',
-                                'categoryId': f'{page_id}',
+                                'categoryId': f"{page_id}",
                                 'parent_category_rn': '3074457345616724775',
                             }
                             payload = {
                                 'contentBeginIndex': '0',
-                                'productBeginIndex': f'{page_nav}',
-                                'beginIndex': f'{page_nav}',
+                                'productBeginIndex': f"{page_nav}",
+                                'beginIndex': f"{page_nav}",
                                 'orderBy': '',
                                 'facetId': '',
                                 'pageView': '',
@@ -288,10 +289,10 @@ if __name__ == '__main__':
                                 articles_df.drop_duplicates(subset=['Frey_product_id', 'Frey_product_name'],
                                                             keep='first',
                                                             inplace=True)
-                                if os.path.isfile(f'{file_name}.csv'):
-                                    articles_df.to_csv(f'{file_name}.csv', index=False, header=False, mode='a')
+                                if os.path.isfile(f"{file_name}.csv"):
+                                    articles_df.to_csv(f"{file_name}.csv", index=False, header=False, mode='a')
                                 else:
-                                    articles_df.to_csv(f'{file_name}.csv', index=False)
+                                    articles_df.to_csv(f"{file_name}.csv", index=False)
                                 write_visited_log(product_id)
 
                     else:
@@ -320,7 +321,7 @@ if __name__ == '__main__':
                             articles_df = pd.DataFrame([dictionary])
                             articles_df.drop_duplicates(subset=['Frey_product_id', 'Frey_product_name'], keep='first',
                                                         inplace=True)
-                            if os.path.isfile(f'{file_name}.csv'):
+                            if os.path.isfile(f"{file_name}.csv"):
                                 articles_df.to_csv(f'{file_name}.csv', index=False, header=False, mode='a')
                             else:
                                 articles_df.to_csv(f'{file_name}.csv', index=False)
@@ -328,7 +329,7 @@ if __name__ == '__main__':
                 write_visited_log(main_url)
             else:
                 if 'ideas-resources' not in str(products):
-                    main_url = f'{base_url}{products.a['href']}'
+                    main_url = f"{base_url}{products.a['href']}"
                     if main_url in read_log_file():
                         continue
                     inner_request = get_soup_verify(main_url, headers)

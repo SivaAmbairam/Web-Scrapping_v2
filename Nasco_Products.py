@@ -104,7 +104,7 @@ if __name__ == '__main__':
                                         product_id = ''
                                     '''PRODUCT PRICE'''
                                     try:
-                                        product_price = f'$ {inside_data['price']}'
+                                        product_price = f"$ {inside_data['price']}"
                                     except:
                                         product_price = ''
                                     print('current datetime------>', datetime.now())
@@ -167,7 +167,7 @@ if __name__ == '__main__':
                                     product_id = ''
                                 '''PRODUCT PRICE'''
                                 try:
-                                    product_price = f'$ {inside_data['price']}'
+                                    product_price = f"$ {inside_data['price']}"
                                 except:
                                     product_price = ''
                                 print('current datetime------>', datetime.now())
